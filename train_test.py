@@ -16,10 +16,10 @@ from utils import *
 parser = argparse.ArgumentParser()
 # Data
 parser.add_argument('--train_data_file',
-                    default='data/tasks_train_addprim_jump.txt',
+                    default='data/SCAN/tasks_train_addprim_jump.txt',
                     help='Path to training set')
 parser.add_argument('--test_data_file',
-                    default='data/tasks_test_addprim_jump.txt',
+                    default='data/SCAN/tasks_test_addprim_jump.txt',
                     help='Path to test set')
 parser.add_argument('--load_vocab_json',default='vocab.json',
                     help='Path to vocab json file')
