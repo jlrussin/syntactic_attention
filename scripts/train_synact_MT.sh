@@ -25,6 +25,7 @@ python train_test.py \
 --train_data_file data/MT/train.daxy \
 --test_data_file data/MT/test.daxy \
 --load_vocab_json vocab_fra_MT_daxiste.json \
+--syn_act True \
 --results_dir results \
---out_data_file train_defaults_MT.json \
---checkpoint_path ../model_weights/defaults_MT.pt
+--out_data_file train_synact_MT.json \
+--checkpoint_path ../model_weights/synact_MT.pt
