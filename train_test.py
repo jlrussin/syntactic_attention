@@ -160,7 +160,7 @@ def main(args):
             test_errors.append(test_error)
 
             # Write stats file
-            results_path = 'results/%s' % (args.results_dir)
+            results_path = '../results/%s' % (args.results_dir)
             if not os.path.isdir(results_path):
                 os.mkdir(results_path)
             stats = {'loss_data':loss_data,

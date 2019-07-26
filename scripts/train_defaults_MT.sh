@@ -25,6 +25,7 @@ python train_test.py \
 --train_data_file data/MT/train.daxy \
 --test_data_file data/MT/test.daxy \
 --load_vocab_json vocab_fra_MT_daxiste.json \
---results_dir results \
+--learning_rate 0.0001 \
+--results_dir train_results \
 --out_data_file train_defaults_MT.json \
 --checkpoint_path ../model_weights/defaults_MT.pt
