@@ -19,6 +19,7 @@ python train_test.py \
 --train_data_file data/MT/train.daxy \
 --test_data_file data/MT/test.daxy \
 --load_vocab_json vocab_eng_MT_daxiste.json \
+--num_iters 600000 \
 --syn_act True \
 --learning_rate 0.0001 \
 --results_dir train_results \

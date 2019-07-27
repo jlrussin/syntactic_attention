@@ -20,8 +20,10 @@ python train_test.py \
 --test_data_file data/MT/test.daxy \
 --load_vocab_json vocab_eng_MT_daxiste.json \
 --num_iters 600000 \
---sem_mlp True \
+--syn_act True \
+--m_hidden_dim 240 \
+--x_hidden_dim 400 \
 --learning_rate 0.0001 \
 --results_dir train_results \
---out_data_file train_defaults_eng_MT_lr0p0001.json \
---checkpoint_path ../model_weights/semmlp_eng_MT_lr0p0001.pt
+--out_data_file train_synact_eng_MT_lr0p0001_m240_x400.json \
+--checkpoint_path ../model_weights/synact_eng_MT_lr0p0001_m240_x400.pt
