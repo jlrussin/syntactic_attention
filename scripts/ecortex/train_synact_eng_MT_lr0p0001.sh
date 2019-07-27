@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH -p local
+#SBATCH -p localLimited
 #SBATCH -A ecortex
 #SBATCH --mem=32G
 #SBATCH --time=6:00:00
