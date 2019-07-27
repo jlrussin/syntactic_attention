@@ -13,7 +13,7 @@ def generate_vocab_json(dataset,data_file,flip,vocab_out_json):
     if dataset == 'SCAN':
         data = ScanDataset(data_file)
     elif dataset == 'MT':
-        data = MTDataset(data_file,flip)
+        data = MTDataset(data_file,vocab=None,flip=flip)
     vocab = data.vocab
     with open(vocab_out_json,'w') as f:
         json.dump(vocab,f)

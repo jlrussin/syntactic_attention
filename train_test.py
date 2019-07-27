@@ -9,12 +9,17 @@ from torch.nn.utils import clip_grad_norm_
 import torch.optim as optim
 
 from torch.utils.data import DataLoader
-from data import ScanDataset,SCAN_collate
+from data import ScanDataset,MTDataset,SCAN_collate
 from SyntacticAttention import *
 from utils import *
 
 parser = argparse.ArgumentParser()
 # Data
+parser.add_argument('--dataset', choices=['SCAN','MT'],
+                    default='SCAN',
+                    help='Dataset class to use')
+parser.add_argument('--flip', type=str2bool, default=False,
+                    help='Flip source and target for MT dataset')
 parser.add_argument('--train_data_file',
                     default='data/SCAN/tasks_train_addprim_jump.txt',
                     help='Path to training set')
@@ -80,11 +85,16 @@ def main(args):
         vocab = json.load(f)
 
     # Datasets
-    all_train_data = ScanDataset(args.train_data_file,vocab)
+    if args.dataset == 'SCAN':
+        all_train_data = ScanDataset(args.train_data_file,vocab)
+        test_data = ScanDataset(args.test_data_file,vocab)
+    elif args.dataset == 'MT':
+        all_train_data = MTDataset(args.train_data_file,vocab,args.flip)
+        test_data = MTDataset(args.test_data_file,vocab,args.flip)
     split_id = int(0.8*len(all_train_data))
     train_data = [all_train_data[i] for i in range(split_id)]
     val_data = [all_train_data[i] for i in range(split_id,len(all_train_data))]
-    test_data = ScanDataset(args.test_data_file,vocab)
+
     # Dataloaders
     train_loader = DataLoader(train_data,args.batch_size,
                               shuffle=True,collate_fn=SCAN_collate)
