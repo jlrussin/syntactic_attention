@@ -99,6 +99,7 @@ def main(args):
     model.eval()
 
     # Evaluation loop:
+    print("Getting predictions...")
     hypotheses = []
     references_list = []
     with torch.no_grad():
@@ -114,7 +115,10 @@ def main(args):
             max_actions = torch.argmax(actions,dim=1)
             max_actions = max_actions.squeeze(0).cpu().numpy()
             out_tokens = [out_idx_to_token[str(a)] for a in max_actions]
-            eos_index = out_tokens.index('<EOS>')
+            if '<EOS>' in out_tokens:
+                eos_index = out_tokens.index('<EOS>')
+            else:
+                eos_index = len(out_tokens)
             hypothesis = out_tokens[:eos_index]
             hypotheses.append(hypothesis)
             # Get references
