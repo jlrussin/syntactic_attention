@@ -105,10 +105,10 @@ def main(args):
         for sample_count,sample in enumerate(test_loader):
             # Forward pass
             instructions, true_actions, _, _ = sample
-            if len(true_actions) < 6:
-                continue # Don't include if less than 4 words (without SOS, EOS)
             instructions = [ins.to(device) for ins in instructions]
             true_actions = [ta.to(device) for ta in true_actions]
+            if len(true_actions[0]) < 6:
+                continue # Don't include if less than 4 words (without SOS, EOS)
             actions,padded_true_actions = model(instructions,true_actions)
             # Get hypothesis
             max_actions = torch.argmax(acts,dim=1)
