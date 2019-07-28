@@ -68,7 +68,7 @@ def main(args):
 
     # Reference dictionary
     reference_dict = {}
-    for sample in dataset:
+    for sample in test_data:
         src = sample[2]
         tar = sample[3]
         assert src[0] == '<SOS>'
