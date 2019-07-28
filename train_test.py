@@ -23,6 +23,9 @@ parser.add_argument('--flip', type=str2bool, default=False,
 parser.add_argument('--train_data_file',
                     default='data/SCAN/tasks_train_addprim_jump.txt',
                     help='Path to training set')
+parser.add_argument('--val_data_file',
+                    default='data/SCAN/tasks_test_addprim_jump.txt',
+                    help='Path to validation set')
 parser.add_argument('--test_data_file',
                     default='data/SCAN/tasks_test_addprim_jump.txt',
                     help='Path to test set')
@@ -93,7 +96,7 @@ def main(args):
         test_data = ScanDataset(args.test_data_file,vocab)
     elif args.dataset == 'MT':
         train_data = MTDataset(args.train_data_file,vocab,args.flip)
-        val_data = MTDataset(args.test_data_file,vocab,args.flip)
+        val_data = MTDataset(args.val_data_file,vocab,args.flip)
         test_data = MTDataset(args.test_data_file,vocab,args.flip)
 
 
