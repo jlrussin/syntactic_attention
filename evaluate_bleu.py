@@ -112,9 +112,10 @@ def main(args):
             actions,padded_true_actions = model(instructions,true_actions)
             # Get hypothesis
             max_actions = torch.argmax(actions,dim=1)
-            max_actions = max_actions[0,:-1] # Remove <EOS>
             max_actions = max_actions.cpu().numpy()
-            hypothesis = [out_idx_to_token[a] for a in max_actions]
+            out_tokens = [out_idx_to_token[str(a)] for a in max_actions]
+            eos_index = out_tokens.index('<EOS>')
+            hypothesis = out_tokens[:eos_index]
             hypotheses.append(hypothesis)
             # Get references
             ins_tokens = ins[0][1:-1] # Remove <EOS> and <SOS>
