@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH -p localPreempt
+#SBATCH -p localBackground
 #SBATCH -A ecortex
 #SBATCH --mem=32G
 #SBATCH --time=6:00:00
