@@ -92,7 +92,7 @@ def main(args):
         val_data = [all_train_data[i] for i in range(split_id,len(all_train_data))]
         test_data = ScanDataset(args.test_data_file,vocab)
     elif args.dataset == 'MT':
-        all_train_data = MTDataset(args.train_data_file,vocab,args.flip)
+        train_data = MTDataset(args.train_data_file,vocab,args.flip)
         val_data = MTDataset(args.test_data_file,vocab,args.flip)
         test_data = MTDataset(args.test_data_file,vocab,args.flip)
 
