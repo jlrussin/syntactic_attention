@@ -6,6 +6,7 @@ from nltk.translate import bleu_score
 
 import torch
 import torch.nn as nn
+from torch.utils.data import DataLoader
 
 from data import ScanDataset,MTDataset,SCAN_collate
 from SyntacticAttention import *
