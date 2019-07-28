@@ -62,6 +62,8 @@ def main(args):
 
     # Dataset
     test_data = MTDataset(args.test_data_file,vocab,args.flip)
+    test_loader = DataLoader(test_data,args.batch_size,
+                             shuffle=True,collate_fn=SCAN_collate)
     in_vocab_size = len(vocab['in_token_to_idx'])
     out_vocab_size = len(vocab['out_idx_to_token'])
     max_tar_len = max([len(b[3]) for b in test_data])
@@ -98,7 +100,7 @@ def main(args):
     hypotheses = []
     references_list = []
     with torch.no_grad():
-        for sample_count,sample in enumerate(test_data):
+        for sample_count,sample in enumerate(test_loader):
             # Forward pass
             instructions, true_actions, _, _ = sample
             if len(true_actions) < 6:
