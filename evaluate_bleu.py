@@ -118,7 +118,7 @@ def main(args):
             hypothesis = out_tokens[:eos_index]
             hypotheses.append(hypothesis)
             # Get references
-            ins_words = ins_words[0][1:-1] # Remove <EOS> and <SOS>
+            ins_words = ins_tokens[0][1:-1] # Remove <EOS> and <SOS>
             key = '_'.join(ins_words)
             references = reference_dict[key]
             references_list.append(references)
