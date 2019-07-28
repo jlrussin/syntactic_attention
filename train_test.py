@@ -87,13 +87,15 @@ def main(args):
     # Datasets
     if args.dataset == 'SCAN':
         all_train_data = ScanDataset(args.train_data_file,vocab)
+        split_id = int(0.8*len(all_train_data))
+        train_data = [all_train_data[i] for i in range(split_id)]
+        val_data = [all_train_data[i] for i in range(split_id,len(all_train_data))]
         test_data = ScanDataset(args.test_data_file,vocab)
     elif args.dataset == 'MT':
         all_train_data = MTDataset(args.train_data_file,vocab,args.flip)
+        val_data = MTDataset(args.test_data_file,vocab,args.flip)
         test_data = MTDataset(args.test_data_file,vocab,args.flip)
-    split_id = int(0.8*len(all_train_data))
-    train_data = [all_train_data[i] for i in range(split_id)]
-    val_data = [all_train_data[i] for i in range(split_id,len(all_train_data))]
+
 
     # Dataloaders
     train_loader = DataLoader(train_data,args.batch_size,
@@ -109,7 +111,7 @@ def main(args):
     model = Seq2SeqSynAttn(in_vocab_size, args.m_hidden_dim, args.x_hidden_dim,
                            out_vocab_size, args.rnn_type, args.n_layers,
                            args.dropout_p, args.seq_sem, args.syn_act,
-                           args.sem_mlp, device)
+                           args.sem_mlp, None, device)
 
     if args.load_weights_from is not None:
         model.load_state_dict(torch.load(args.load_weights_from))

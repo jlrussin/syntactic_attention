@@ -194,7 +194,7 @@ class SynAttnDecoder(nn.Module):
 class Seq2SeqSynAttn(nn.Module):
     def __init__(self, in_vocab_size, m_hidden_size, x_hidden_size,
                  out_vocab_size, rnn_type, num_layers, dropout_p,
-                 seq_sem, syn_act, sem_mlp, device):
+                 seq_sem, syn_act, sem_mlp, max_len, device):
         super(Seq2SeqSynAttn, self).__init__()
         self.in_vocab_size = in_vocab_size # number of commands
         self.m_hidden_size = m_hidden_size # semantic hidden size
@@ -206,6 +206,7 @@ class Seq2SeqSynAttn(nn.Module):
         self.seq_sem = seq_sem # Sequential semantics option
         self.syn_act = syn_act # Syntax-Action option
         self.sem_mlp = sem_mlp # Nonlinear semantics (semantics with MLP)
+        self.max_len = max_len # Max length (only for prediction)
         self.device = device
 
         self.encoder = SynAttnEncoder(in_vocab_size, m_hidden_size,
@@ -220,7 +221,10 @@ class Seq2SeqSynAttn(nn.Module):
         # Pad sequences of true actions
         seq_lens = [a.shape[0] for a in true_actions]
         padded_true_actions = pad_sequence(true_actions,padding_value=-100)
-        max_len = padded_true_actions.shape[0]
+        if self.max_len is None:
+            max_len = padded_true_actions.shape[0]
+        else:
+            max_len = self.max_len
 
         # Encoder
         m_i,h_j,s_i = self.encoder(instructions)
