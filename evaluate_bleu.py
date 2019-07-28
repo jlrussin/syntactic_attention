@@ -104,7 +104,7 @@ def main(args):
     with torch.no_grad():
         for sample_count,sample in enumerate(test_loader):
             # Forward pass
-            instructions, true_actions, _, _ = sample
+            instructions, true_actions, ins_tokens, act_tokens = sample
             instructions = [ins.to(device) for ins in instructions]
             true_actions = [ta.to(device) for ta in true_actions]
             if len(true_actions[0]) < 6:
@@ -118,8 +118,8 @@ def main(args):
             hypothesis = out_tokens[:eos_index]
             hypotheses.append(hypothesis)
             # Get references
-            ins_tokens = instructions[0][1:-1] # Remove <EOS> and <SOS>
-            key = '_'.join(ins_tokens)
+            ins_words = ins_words[0][1:-1] # Remove <EOS> and <SOS>
+            key = '_'.join(ins_words)
             references = reference_dict[key]
             references_list.append(references)
 
