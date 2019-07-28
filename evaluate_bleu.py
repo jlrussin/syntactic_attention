@@ -45,10 +45,10 @@ parser.add_argument('--load_weights_from', default=None,
                     help='Path to saved weights')
 
 # Output options
-parser.add_argument('--results_dir', default='results',
-                    help='Results subdirectory to save results')
-parser.add_argument('--out_data_file', default='results.json',
-                    help='Name of output data file')
+#parser.add_argument('--results_dir', default='results',
+#                    help='Results subdirectory to save results')
+#parser.add_argument('--out_data_file', default='results.json',
+#                    help='Name of output data file')
 
 def main(args):
     # CUDA
