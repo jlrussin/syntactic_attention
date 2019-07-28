@@ -18,4 +18,4 @@ python evaluate_bleu.py \
 --test_data_file data/MT/train.daxy \
 --load_vocab_json vocab_fra_MT_daxiste.json \
 --syn_act True \
---load_weights_from ../model_weights/synact_eng_MT_lr0p0002.pt
+--load_weights_from ../model_weights/synact_fra_MT_lr0p0002.pt
