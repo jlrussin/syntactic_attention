@@ -62,8 +62,9 @@ def main(args):
     out_idx_to_token = vocab['out_idx_to_token']
 
     # Dataset
+    batch_size = 1
     test_data = MTDataset(args.test_data_file,vocab,args.flip)
-    test_loader = DataLoader(test_data,args.batch_size,
+    test_loader = DataLoader(test_data,batch_size,
                              shuffle=True,collate_fn=SCAN_collate)
     in_vocab_size = len(vocab['in_token_to_idx'])
     out_vocab_size = len(vocab['out_idx_to_token'])
