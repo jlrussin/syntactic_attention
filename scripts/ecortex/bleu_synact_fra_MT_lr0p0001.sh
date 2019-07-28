@@ -14,7 +14,7 @@ conda activate pytorch1.0
 
 python evaluate_bleu.py \
 --dataset MT \
---flip True \
+--flip False \
 --test_data_file data/MT/train.daxy \
 --load_vocab_json vocab_fra_MT_daxiste.json \
 --syn_act True \
