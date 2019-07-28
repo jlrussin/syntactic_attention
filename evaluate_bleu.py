@@ -111,7 +111,7 @@ def main(args):
                 continue # Don't include if less than 4 words (without SOS, EOS)
             actions,padded_true_actions = model(instructions,true_actions)
             # Get hypothesis
-            max_actions = torch.argmax(acts,dim=1)
+            max_actions = torch.argmax(actions,dim=1)
             max_actions = max_actions[0,:-1] # Remove <EOS>
             max_actions = max_actions.cpu().numpy()
             hypothesis = [out_idx_to_token[a] for a in max_actions]
