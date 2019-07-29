@@ -22,7 +22,7 @@ parser.add_argument('--flip', type=str2bool, default=False,
 parser.add_argument('--train_data_file',
                     default='data/MT/train',
                     help='Path to test set')
-parser.add_argument('--test_data_file',
+parser.add_argument('--val_data_file',
                     default='data/MT/test_no_unk.txt',
                     help='Path to test set')
 parser.add_argument('--test_data_file',
@@ -113,7 +113,7 @@ def evaluate_bleu(dataloader,reference_dict,model,max_len,device):
 
     # Return model max_len to None
     model.max_len = None
-    
+
     return bleu
 
 def main(args):
