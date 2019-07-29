@@ -75,8 +75,9 @@ def get_reference_dict(dataset):
             reference_dict[key].append(tar)
     return reference_dict
 
-def evaluate_bleu(dataloader,reference_dict,model,max_len,device):
+def evaluate_bleu(dataloader,vocab,reference_dict,model,max_len,device):
     # Setup
+    out_idx_to_token = vocab['out_idx_to_token']
     model.max_len = max_len
     print("Getting predictions...")
     hypotheses = []
@@ -124,7 +125,6 @@ def main(args):
     # Vocab
     with open(args.load_vocab_json,'r') as f:
         vocab = json.load(f)
-    out_idx_to_token = vocab['out_idx_to_token']
     in_vocab_size = len(vocab['in_token_to_idx'])
     out_vocab_size = len(vocab['out_idx_to_token'])
 
@@ -162,17 +162,17 @@ def main(args):
     model.eval()
 
     # Get BLEU scores
-    train_bleu = evaluate_bleu(train_loader,train_ref_dict,model,
+    train_bleu = evaluate_bleu(train_loader,vocab,train_ref_dict,model,
                                train_max_len, device)
     print("Training set: %s" % args.train_data_file)
     print("Train BLEU: %f" % train_bleu)
 
-    val_bleu = evaluate_bleu(val_loader,val_ref_dict,model,
+    val_bleu = evaluate_bleu(val_loader,vocab,val_ref_dict,model,
                                val_max_len, device)
     print("Validation set: %s" % args.val_data_file)
     print("Validation BLEU: %f" % val_bleu)
 
-    test_bleu = evaluate_bleu(test_loader,test_ref_dict,model,
+    test_bleu = evaluate_bleu(test_loader,vocab,test_ref_dict,model,
                               test_max_len, device)
     print("Test set: %s" % args.train_data_file)
     print("Test BLEU: %f" % train_bleu)
