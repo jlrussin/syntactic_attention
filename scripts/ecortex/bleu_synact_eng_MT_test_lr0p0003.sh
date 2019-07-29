@@ -19,4 +19,5 @@ python evaluate_bleu.py \
 --val_data_file data/MT/test_no_unk.txt \
 --test_data_file data/MT/test \
 --load_vocab_json vocab_eng_MT_all.json \
+--syn_act True \
 --load_weights_from ../model_weights/synact_eng_MT_test_lr0p0003.pt
