@@ -19,10 +19,16 @@ parser.add_argument('--dataset', choices=['MT'],
                     help='MT only')
 parser.add_argument('--flip', type=str2bool, default=False,
                     help='Flip source and target for MT dataset')
-parser.add_argument('--test_data_file',
-                    default='data/MT/train.daxy',
+parser.add_argument('--train_data_file',
+                    default='data/MT/train',
                     help='Path to test set')
-parser.add_argument('--load_vocab_json',default='vocab_fra_MT_daxiste.json',
+parser.add_argument('--test_data_file',
+                    default='data/MT/test_no_unk.txt',
+                    help='Path to test set')
+parser.add_argument('--test_data_file',
+                    default='data/MT/test',
+                    help='Path to test set')
+parser.add_argument('--load_vocab_json',default='vocab_eng_MT_all.json',
                     help='Path to vocab json file')
 
 # Model hyperparameters
@@ -51,28 +57,9 @@ parser.add_argument('--load_weights_from', default=None,
 #parser.add_argument('--out_data_file', default='results.json',
 #                    help='Name of output data file')
 
-def main(args):
-    # CUDA
-    use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda:0" if use_cuda else "cpu")
-
-    # Vocab
-    with open(args.load_vocab_json,'r') as f:
-        vocab = json.load(f)
-    out_idx_to_token = vocab['out_idx_to_token']
-
-    # Dataset
-    batch_size = 1
-    test_data = MTDataset(args.test_data_file,vocab,args.flip)
-    test_loader = DataLoader(test_data,batch_size,
-                             shuffle=True,collate_fn=SCAN_collate)
-    in_vocab_size = len(vocab['in_token_to_idx'])
-    out_vocab_size = len(vocab['out_idx_to_token'])
-    max_tar_len = max([len(b[3]) for b in test_data])
-
-    # Reference dictionary
+def get_reference_dict(dataset):
     reference_dict = {}
-    for sample in test_data:
+    for sample in dataset:
         src = sample[2]
         tar = sample[3]
         assert src[0] == '<SOS>'
@@ -86,24 +73,16 @@ def main(args):
             reference_dict[key] = [tar]
         else:
             reference_dict[key].append(tar)
+    return reference_dict
 
-    # Model
-    model = Seq2SeqSynAttn(in_vocab_size, args.m_hidden_dim, args.x_hidden_dim,
-                           out_vocab_size, args.rnn_type, args.n_layers,
-                           args.dropout_p, args.seq_sem, args.syn_act,
-                           args.sem_mlp, max_tar_len, device)
-
-    if args.load_weights_from is not None:
-        model.load_state_dict(torch.load(args.load_weights_from))
-    model.to(device)
-    model.eval()
-
-    # Evaluation loop:
+def evaluate_bleu(dataloader,reference_dict,model,max_len,device):
+    # Setup
+    model.max_len = max_len
     print("Getting predictions...")
     hypotheses = []
     references_list = []
     with torch.no_grad():
-        for sample_count,sample in enumerate(test_loader):
+        for sample_count,sample in enumerate(dataloader):
             # Forward pass
             instructions, true_actions, ins_tokens, act_tokens = sample
             instructions = [ins.to(device) for ins in instructions]
@@ -130,7 +109,73 @@ def main(args):
     # Compute BLEU
     print("Computing BLEU score...")
     bleu = bleu_score.corpus_bleu(references_list,hypotheses)
-    print("BLEU score: ", bleu*100)
+    bleu = bleu*100
+
+    # Return model max_len to None
+    model.max_len = None
+    
+    return bleu
+
+def main(args):
+    # CUDA
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_cuda else "cpu")
+
+    # Vocab
+    with open(args.load_vocab_json,'r') as f:
+        vocab = json.load(f)
+    out_idx_to_token = vocab['out_idx_to_token']
+    in_vocab_size = len(vocab['in_token_to_idx'])
+    out_vocab_size = len(vocab['out_idx_to_token'])
+
+    # Dataset
+    batch_size = 1
+    train_data = MTDataset(args.train_data_file,vocab,args.flip)
+    val_data = MTDataset(args.val_data_file,vocab,args.flip)
+    test_data = MTDataset(args.test_data_file,vocab,args.flip)
+    train_loader = DataLoader(train_data,batch_size,
+                             shuffle=True,collate_fn=SCAN_collate)
+    val_loader = DataLoader(val_data,batch_size,
+                             shuffle=True,collate_fn=SCAN_collate)
+    test_loader = DataLoader(test_data,batch_size,
+                             shuffle=True,collate_fn=SCAN_collate)
+
+    # Max lengths
+    train_max_len = max([len(b[3]) for b in train_data])
+    val_max_len = max([len(b[3]) for b in val_data])
+    test_max_len = max([len(b[3]) for b in test_data])
+
+    # Reference dicts
+    train_ref_dict = get_reference_dict(train_data)
+    val_ref_dict = get_reference_dict(val_data)
+    test_ref_dict = get_reference_dict(test_data)
+
+    # Model
+    model = Seq2SeqSynAttn(in_vocab_size, args.m_hidden_dim, args.x_hidden_dim,
+                           out_vocab_size, args.rnn_type, args.n_layers,
+                           args.dropout_p, args.seq_sem, args.syn_act,
+                           args.sem_mlp, None, device)
+
+    if args.load_weights_from is not None:
+        model.load_state_dict(torch.load(args.load_weights_from))
+    model.to(device)
+    model.eval()
+
+    # Get BLEU scores
+    train_bleu = evaluate_bleu(train_loader,train_ref_dict,model,
+                               train_max_len, device)
+    print("Training set: %s" % args.train_data_file)
+    print("Train BLEU: %f" % train_bleu)
+
+    val_bleu = evaluate_bleu(val_loader,val_ref_dict,model,
+                               val_max_len, device)
+    print("Validation set: %s" % args.val_data_file)
+    print("Validation BLEU: %f" % val_bleu)
+
+    test_bleu = evaluate_bleu(test_loader,test_ref_dict,model,
+                              test_max_len, device)
+    print("Test set: %s" % args.train_data_file)
+    print("Test BLEU: %f" % train_bleu)
 
 if __name__ == '__main__':
     args = parser.parse_args()
