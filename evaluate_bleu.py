@@ -174,8 +174,8 @@ def main(args):
 
     test_bleu = evaluate_bleu(test_loader,vocab,test_ref_dict,model,
                               test_max_len, device)
-    print("Test set: %s" % args.train_data_file)
-    print("Test BLEU: %f" % train_bleu)
+    print("Test set: %s" % args.test_data_file)
+    print("Test BLEU: %f" % test_bleu)
 
 if __name__ == '__main__':
     args = parser.parse_args()
