@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -p localLimited
 #SBATCH -A ecortex
-#SBATCH --mem=32G
+#SBATCH --mem=10G
 #SBATCH --time=6:00:00
 #SBATCH --gres=gpu:1
 #SBATCH -c 4
@@ -14,6 +14,7 @@ source /usr/local/anaconda3/etc/profile.d/conda.sh
 conda activate pytorch1.0
 
 python train_test.py \
+--seed 3 \
 --dataset MT \
 --flip True \
 --train_data_file data/MT/train \
